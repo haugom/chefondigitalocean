@@ -14,3 +14,4 @@ I am also experimenting running terraform in a docker container locally instead 
 - I have created a RSA key without password and stored it in `.ssh/.ssh/id_rsa_terraform`
 - I have created a executable script in `~/.local/bin/terraform`. I will include the script here and just name it `terraform.sh` if you want to have a look at it: `https://github.com/haugom/terraform/blob/master/bin/terraform.sh`
 - Need to also provide certificate to talk to chef-server.
+- The tags I am adding to the droplet, I have created manually firewall rules which look for these tags. Maybe I can provision firewall rules with terraform as well.
