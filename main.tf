@@ -15,20 +15,57 @@ resource "digitalocean_droplet" "mywebserver" {
   ipv6               = true
   name               = "mywebserver"
 
-  provisioner "remote-exec" {
-    inline = [
-      "export PATH=$PATH:/usr/bin",
-      "sudo apt-get update",
-      "sudo apt-get -y install nginx",
-    ]
+  tags   = ["http", "tls", "all_outbound", "allow_remote"]
+
+  provisioner "chef" {
+    attributes_json = <<-EOF
+      {
+        "key": "value",
+        "app": {
+          "cluster1": {
+            "nodes": [
+              "webserver1",
+              "webserver2"
+            ]
+          }
+        }
+      }
+    EOF
+
+    environment     = "_default"
+    run_list        = ["role[web]"]
+    node_name       = "mywebserver"
+    # secret_key      = "${file("../encrypted_data_bag_secret")}"
+    server_url      = "https://chef-server.cloud.haugom.org/organizations/haugom_org"
+    recreate_client = true
+    user_name       = "haugom"
+    user_key        = "${file("~/.ssh/haugom.pem")}"
+    version         = "13.4.19"
+    # If you have a self signed cert on your chef server change this to :verify_none
+    ssl_verify_mode = ":verify_peer"
 
     connection {
-      type     = "ssh"
-      private_key = "${file("~/.ssh/id_rsa_terraform")}"
-      user     = "root"
-      timeout  = "2m"
+        type     = "ssh"
+        private_key = "${file("~/.ssh/id_rsa_terraform")}"
+        user     = "root"
+        timeout  = "2m"
     }
   }
+
+  # provisioner "remote-exec" {
+  #   inline = [
+  #     "export PATH=$PATH:/usr/bin",
+  #     "sudo apt-get update",
+  #     "sudo apt-get -y install nginx",
+  #   ]
+  #
+  #   connection {
+  #     type     = "ssh"
+  #     private_key = "${file("~/.ssh/id_rsa_terraform")}"
+  #     user     = "root"
+  #     timeout  = "2m"
+  #   }
+  # }
 }
 
 resource "digitalocean_domain" "mywebserver" {

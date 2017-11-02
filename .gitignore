@@ -1,0 +1,3 @@
+.chef/
+terraform.tfstate
+terraform.tfstate.backup
