@@ -15,7 +15,7 @@ resource "digitalocean_droplet" "mywebserver" {
   ipv6               = true
   name               = "mywebserver"
 
-  tags   = ["http", "tls", "all_outbound", "allow_remote"]
+  tags   = ["http", "tls", "all_outbound", "allow_remote", "mylocalnetwork"]
 
   provisioner "chef" {
     attributes_json = <<-EOF
